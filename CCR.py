@@ -2,10 +2,28 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as mb
 import requests
+from PIL import Image, ImageTk
+
+
+def load_image(event):
+    v = base_combobox.get()
+    base_img = next(key for key, value in coins.items() if value == v)
+    try:
+        file_path = f'C://Users/Rozaliya/PycharmProjects/FCW/icons/{base_img}.jpg'
+        if file_path:  # Проверяем, был ли выбран файл
+            image = Image.open(file_path)
+            image = image.resize((70, 70))
+            image_tk = ImageTk.PhotoImage(image)
+            canvas.create_image(0, 0, anchor=NW, image=image_tk)
+            canvas.image = image_tk  # Сохраняем ссылку на изображение
+    except Exception as e:
+        mb.showerror("Ошибка", f"Не удалось загрузить: {e}")
 
 
 def clear_label(event):
     label.config(text="")
+    if base_combobox:
+        load_image(event)
 
 
 def exchange():
@@ -74,13 +92,39 @@ currencis = {
     "eur": "Евро"
 }
 
+jpegs = {
+    "bitcoin": "bitcoin.jpg",
+    "ethereum": "ethereum.jpg",
+    "dogecoin": "dogecoin.jpg",
+    "ripple": "ripple.jpg",
+    "solana": "solana.jpg",
+    "cardano": "cardano.jpg",
+    "stellar": "stellar.jpg",
+    "polkadot": "polkadot.jpg",
+    "celestia": "celestia.jpg",
+    "litecoin": "litecoin.jpg",
+    "internet-computer": "internet-computer.jpg",
+    "binance-peg-weth": "binance-peg-weth.jgp",
+    "wrapped-bitcoin": "wrapped-bitcoin.jpg",
+    "binancecoin": "binancecoin.jpg",
+    "avalanche-2": "avalanche-2.jpg",
+    "staked-ether": "staked-ether.jpg",
+    "rocket-pool-eth": "rocket-pool-eth.jpg",
+    "wrapped-steth": "wrapped-steth.jpg",
+    "weth": "weth.jgp",
+    "tron": "tron.jpg"
+}
+
 window = Tk()
-window.title("Курсы обмена криптовалюты")
+window.title("CCR - Курсы обмена криптовалюты")
 w = window.winfo_screenwidth()
 h = window.winfo_screenheight()
 w2 = w//2 - 230
 h2 = h//2 - 175
 window.geometry(f"460x350+{w2}+{h2}")
+
+canvas = Canvas(window, width=70, height=70)
+canvas.pack()
 
 Label(text="Выберите криптовалюту:").pack(padx=5, pady=5)
 
