@@ -3,7 +3,38 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as mb
 import requests
+from requests.packages import target
 
+target_code = None
+target_code2 = None
+base_code = None
+
+
+def tc_tc2():
+    global (target_code, target_code2, base_code)
+    try:
+        response = requests.get(
+            f'https://api.coingecko.com/api/v3/simple/price?ids={base_code}&vs_currencies=usd,eur,rub')
+        response.raise_for_status()
+
+        data = response.json()
+
+        if target_code in data[f'{base_code}']:
+            if target_code2 in data[f'{base_code}']:
+                exchange_rate = data[f'{base_code}'][target_code]
+                exchange_rate2 = data[f'{base_code}'][target_code2]
+                target_name = currencis[target_code]
+                target_name2 = currencis[target_code2]
+                base_name = coins[base_code]
+                label.config(text=f"Курс {exchange_rate:.2f} {target_name} за 1 {base_name}\n"
+                                  f"Курс {exchange_rate2:.2f} {target_name2} за 1 {base_name}")
+            else:
+                mb.showerror("Ошибка", f"Валюта {target_code2} не найдена")
+        else:
+            mb.showerror("Ошибка", f"Валюта {target_code} не найдена")
+
+    except Exception as e:
+        mb.showerror("Ошибка", f"Ошибка: {e}")
 
 def exchange():
     t = target_combobox.get()
@@ -14,28 +45,8 @@ def exchange():
     target_code2 = next(key for key, value in currencis.items() if value == t2)
 
     if target_code and target_code2 and base_code:
-        try:
-            response = requests.get(f'https://api.coingecko.com/api/v3/simple/price?ids={base_code}&vs_currencies=usd,eur,rub')
-            response.raise_for_status()
+        tc_tc2()
 
-            data = response.json()
-
-            if target_code in data[f'{base_code}']:
-                if target_code2 in data[f'{base_code}']:
-                    exchange_rate = data[f'{base_code}'][target_code]
-                    exchange_rate2 = data[f'{base_code}'][target_code2]
-                    target_name = currencis[target_code]
-                    target_name2 = currencis[target_code2]
-                    base_name = coins[base_code]
-                    label.config(text=f"Курс {exchange_rate:.2f} {target_name} за 1 {base_name}\n"
-                                      f"Курс {exchange_rate2:.2f} {target_name2} за 1 {base_name}")
-                else:
-                    mb.showerror("Ошибка", f"Валюта {target_code2} не найдена")
-            else:
-                mb.showerror("Ошибка", f"Валюта {target_code} не найдена")
-
-        except Exception as e:
-            mb.showerror("Ошибка", f"Ошибка: {e}")
     else:
         mb.showwarning("Внимание", "Выберите код валюты")
 
