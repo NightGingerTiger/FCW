@@ -9,18 +9,22 @@ def load_image(event):
     v = base_combobox.get()
     base_img = next(key for key, value in coins.items() if value == v)
     try:
-        file_path = f'C://Users/Rozaliya/PycharmProjects/FCW/icons/{base_img}.jpg'
-        if file_path:  # Проверяем, был ли выбран файл
+        file_path = f'C://Users/icons/{base_img}.jpg'
+        if file_path:
             image = Image.open(file_path)
             image = image.resize((70, 70))
             image_tk = ImageTk.PhotoImage(image)
             canvas.create_image(0, 0, anchor=NW, image=image_tk)
-            canvas.image = image_tk  # Сохраняем ссылку на изображение
+            canvas.image = image_tk
     except Exception as e:
-        mb.showerror("Ошибка", f"Не удалось загрузить: {e}")
+        print(f'{e}')
 
 
 def clear_label(event):
+    label.config(text="")
+
+
+def clear_label_base(event):
     label.config(text="")
     if base_combobox:
         load_image(event)
@@ -116,7 +120,7 @@ jpegs = {
 }
 
 window = Tk()
-window.title("CCR - Курсы обмена криптовалюты")
+window.title("Курсы обмена криптовалюты")
 w = window.winfo_screenwidth()
 h = window.winfo_screenheight()
 w2 = w//2 - 230
@@ -130,7 +134,7 @@ Label(text="Выберите криптовалюту:").pack(padx=5, pady=5)
 
 base_combobox = ttk.Combobox(values=list(coins.values()))
 base_combobox.pack(padx=5, pady=5)
-base_combobox.bind("<<ComboboxSelected>>", clear_label)
+base_combobox.bind("<<ComboboxSelected>>", clear_label_base)
 
 Label(text="Выберите код целевой валюты:").pack(padx=5, pady=5)
 
